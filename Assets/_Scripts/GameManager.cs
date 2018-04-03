@@ -487,14 +487,14 @@ public class GameManager : Singleton<GameManager>
 
             }
 
-            //Make upper square drop
-            if (rowObj.transform.parent.childCount - rowObj.transform.GetSiblingIndex() > 1)
-            {
+            ////Make upper square drop
+            //if (rowObj.transform.parent.childCount - rowObj.transform.GetSiblingIndex() > 1)
+            //{
                
-                rowObj.transform.parent.GetChild(rowObj.transform.GetSiblingIndex() + 1).gameObject.GetComponent<Square>().Touched = false;
-            }
+            //    rowObj.transform.parent.GetChild(rowObj.transform.GetSiblingIndex() + 1).gameObject.GetComponent<Square>().Touched = false;
+            //}
             //Make this square drop
-            rowObj.GetComponent<Square>().Touched = false;
+            //rowObj.GetComponent<Square>().Touched = false;
             rowObj.GetComponent<Collider2D>().isTrigger = true;
 
 

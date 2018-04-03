@@ -122,28 +122,30 @@ public class Square : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
         //if Touched - stops 
-       if(!this.Touched)
-        {
+       //if(!this.Touched)
+       // {
             // If it's first and not touched - fall
-            if (this.gameObject.transform.GetSiblingIndex() == 1)
+            if (this.gameObject.transform.parent != null)
             {
 
                 gameObject.transform.position = Vector2.MoveTowards(transform.position, GameManager.Instance.spawns[int.Parse(gameObject.transform.parent.name)].transform.GetChild(gameObject.transform.GetSiblingIndex()).position, speed * Time.deltaTime);
 
             }
             else
+            {
                 gameObject.transform.position = Vector2.MoveTowards(transform.position, centerPrefab.position, speed * Time.deltaTime);
+            }
 
-        }
-        else
-        {
+        //}
+        //else
+        //{
           
-        }
-        if (this.gameObject.transform.parent == null)
-        {
+        ////}
+        //if (this.gameObject.transform.parent == null)
+        //{
+            
 
-            this.Touched = false;
-        }
+        //}
 
 
         // Boundary
@@ -162,9 +164,9 @@ public class Square : MonoBehaviour {
 
         if (other.gameObject.CompareTag("spot"))
         {
-            //Make it stay 
+            ////Make it stay 
             
-            this.Touched = true;
+            //this.Touched = true;
 
 
             //Debug.Log("IT'SA ME MARIO");
@@ -210,8 +212,8 @@ public class Square : MonoBehaviour {
                 //    //    GameManager.Instance.ExpandMoves();
                 //    }
 
-                //Make it fall down
-                this.Touched = true;
+                ////Make it fall down
+                //this.Touched = true;
                 //Debug.Log("SQUARE COLLISION");
                 GameManager.Instance.CheckRow(int.Parse(this.gameObject.transform.parent.name), gameObject.transform.GetSiblingIndex(), score);
                 //Check GameOver
@@ -267,16 +269,16 @@ public class Square : MonoBehaviour {
 
     }
 
-    public void OnTriggerExit2D(Collider2D other)
-    {
-        //square and other is lower than this
-        if (other.CompareTag("square") && gameObject.CompareTag("square") && gameObject.transform.GetSiblingIndex() > other.gameObject.transform.GetSiblingIndex())
-        {
-            //Debug.Log("SQUARE EXIT");
-            gameObject.GetComponent<Square>().Touched = false;
-        }
+    //public void OnTriggerExit2D(Collider2D other)
+    //{
+    //    //square and other is lower than this
+    //    if (other.CompareTag("square") && gameObject.CompareTag("square") && gameObject.transform.GetSiblingIndex() > other.gameObject.transform.GetSiblingIndex())
+    //    {
+    //        //Debug.Log("SQUARE EXIT");
+    //        gameObject.GetComponent<Square>().Touched = false;
+    //    }
 
-    }
+    //}
 
 
     //public void OnTriggerStay2D(Collider2D other)
