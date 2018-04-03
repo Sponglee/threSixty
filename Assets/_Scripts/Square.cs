@@ -118,23 +118,26 @@ public class Square : MonoBehaviour {
 
 
     }
-	
-	// Update is called once per frame
-	void FixedUpdate () {
-        //if Touched - stops 
-       //if(!this.Touched)
-       // {
-            // If it's first and not touched - fall
-            if (this.gameObject.transform.parent != null)
-            {
 
+    // Update is called once per frame
+    void FixedUpdate() {
+        //if Touched - stops 
+        //if(!this.Touched)
+        // {
+        // If it's first and not touched - fall
+        if (this.gameObject.transform.parent != null)
+        {
+            if (gameObject.transform.GetSiblingIndex() == 6)
+            
+                gameObject.transform.position = Vector2.MoveTowards(transform.position, GameManager.Instance.spawns[int.Parse(gameObject.transform.parent.name)].transform.GetChild(5).position, speed * Time.deltaTime);
+            else
                 gameObject.transform.position = Vector2.MoveTowards(transform.position, GameManager.Instance.spawns[int.Parse(gameObject.transform.parent.name)].transform.GetChild(gameObject.transform.GetSiblingIndex()).position, speed * Time.deltaTime);
 
-            }
-            else
-            {
-                gameObject.transform.position = Vector2.MoveTowards(transform.position, centerPrefab.position, speed * Time.deltaTime);
-            }
+        }
+        else
+        {
+            gameObject.transform.position = Vector2.MoveTowards(transform.position, centerPrefab.position, speed * Time.deltaTime);
+        }
 
         //}
         //else

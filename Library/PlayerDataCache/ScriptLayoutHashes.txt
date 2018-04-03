@@ -296,3 +296,4 @@ b27591af3f9c11d720dcbce485c26239 Assembly-CSharp.dll:.GameManager
 f1b04b42258b96532fc34ed433d02c62 Assembly-CSharp.dll:Shapes2D.Spawner
 e18ec9599076cae1fc974c8e5190ba8e Assembly-CSharp.dll:.Square
 32e8fe00b63ed946490b898f6024a2f2 Facebook.Unity.Settings.dll:Facebook.Unity.Settings.FacebookSettings
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.FPS
