@@ -173,10 +173,10 @@ public class Square : MonoBehaviour {
 
 
             //Debug.Log("IT'SA ME MARIO");
-            if (this.gameObject.transform.parent != null)
-            {
+            //if (!GameManager.Instance.CheckInProgress)
+            //{
                 GameManager.Instance.CheckRow(int.Parse(this.gameObject.transform.parent.name), gameObject.transform.GetSiblingIndex(), score);
-            }
+            //}
 
 
             //this.column = other.gameObject.transform;
@@ -218,9 +218,13 @@ public class Square : MonoBehaviour {
                 ////Make it fall down
                 //this.Touched = true;
                 //Debug.Log("SQUARE COLLISION");
-                GameManager.Instance.CheckRow(int.Parse(this.gameObject.transform.parent.name), gameObject.transform.GetSiblingIndex(), score);
-                //Check GameOver
-                GameManager.Instance.GameOver();
+                //if(!GameManager.Instance.CheckInProgress)
+                //{
+                    GameManager.Instance.CheckRow(int.Parse(this.gameObject.transform.parent.name), gameObject.transform.GetSiblingIndex(), score);
+                    //Check GameOver
+                    GameManager.Instance.GameOver();
+                //}
+               
 
 
 

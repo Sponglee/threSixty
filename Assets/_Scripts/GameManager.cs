@@ -30,7 +30,8 @@ public class GameManager : Singleton<GameManager>
     public int scoreUpper;
     [SerializeField]
     public int expandMoves;
-
+    [SerializeField]
+    private float stopDelay;
    
     [SerializeField]
     private int moves = 0;
@@ -79,15 +80,27 @@ public class GameManager : Singleton<GameManager>
 
     // Obj list for pop checkrow
     List<GameObject> rowObjs;
-   
+    // list of rowObjs to execute(resets each click)
+    List<List<GameObject>> popObjs;
+
+
     List<RandValues> rands;
     //list of randSpawns
     List<GameObject> randSpawns;
 
+    // struct to hold randomSpawn values
+    public struct RandValues
+    {
+
+        public int Rng { get; set; }
+        public int RandScore { get; set; }
+    }
 
     //For getspots
     Vector3 center;
     float rad;
+
+    public bool CheckInProgress = false;
 
     void Start()
     {
@@ -118,6 +131,7 @@ public class GameManager : Singleton<GameManager>
 
 
         rowObjs = new List<GameObject>();
+        popObjs = new List<List<GameObject>>();
     }
 
 
@@ -131,13 +145,14 @@ public class GameManager : Singleton<GameManager>
             if (Input.GetMouseButtonUp(0) && SwipeManager.Instance.Direction == SwipeDirection.None && Time.time > coolDown)
             {
                 ClickSpawn();
+                popObjs.Clear();
             }
         }
 
             //Turn left
             if (SwipeManager.Instance.IsSwiping(SwipeDirection.Left) || Input.GetKeyDown(KeyCode.LeftArrow))
             {
-               
+                        
                         wheel.transform.Rotate(Vector3.forward, 360 / nBottom);
            
             }
@@ -154,9 +169,13 @@ public class GameManager : Singleton<GameManager>
 
     private void ClickSpawn()
     {
-     
-            //Cooldown for spawn 0.5sec
-            coolDown = Time.time + 0.5f;
+        //Debug.Log("==============");
+        //Cooldown for spawn 0.5sec
+        
+        //reset list of rowObjs to pop
+        
+
+        coolDown = Time.time + 0.5f;
 
             //spawn a square
             squareSpawn = Instantiate(squarePrefab, currentSpawn.transform.position, Quaternion.identity);
@@ -261,8 +280,10 @@ public class GameManager : Singleton<GameManager>
     //Checks for 3 in a row
     public void CheckRow(int spotIndex, int squareIndex, int checkScore)
     {
-        rowObjs.Clear();
-
+        //Debug.Log("ScheckRow"+spotIndex);
+        List<GameObject> tempRowObjs = new List<GameObject>();
+        //starts check
+        
         //iterator for list
         int index = spotIndex;
         //noMoves = false;
@@ -276,7 +297,7 @@ public class GameManager : Singleton<GameManager>
         GameObject tmpSquare = spots[spotIndex].transform.GetChild(squareIndex).gameObject;
 
         //add placed square to rowOBjs
-        rowObjs.Add(spots[index].transform.GetChild(squareIndex).gameObject);
+        tempRowObjs.Add(spots[index].transform.GetChild(squareIndex).gameObject);
 
 
         do
@@ -310,7 +331,7 @@ public class GameManager : Singleton<GameManager>
                         //if there's nothing to the left
                         if (spots[firstIndex].transform.childCount < squareIndex + 1)
                         {
-                            rowObjs.Add(spots[index].transform.GetChild(squareIndex).gameObject);
+                            tempRowObjs.Add(spots[index].transform.GetChild(squareIndex).gameObject);
                             //if never set up yet
                             if (startIndex > nBottom)
                             {
@@ -325,7 +346,7 @@ public class GameManager : Singleton<GameManager>
                             //or there's not that score
                             if (spots[firstIndex].transform.GetChild(squareIndex).GetComponent<Square>().Score != checkScore)
                             {
-                                rowObjs.Add(spots[index].transform.GetChild(squareIndex).gameObject);
+                                tempRowObjs.Add(spots[index].transform.GetChild(squareIndex).gameObject);
                                 //if never set up yet
                                 if (startIndex > nBottom)
                                 {
@@ -336,7 +357,7 @@ public class GameManager : Singleton<GameManager>
                             }
                             else if (spots[firstIndex].transform.GetChild(squareIndex).GetComponent<Square>().Score == checkScore)
                             {
-                                rowObjs.Add(spots[index].transform.GetChild(squareIndex).gameObject);
+                                tempRowObjs.Add(spots[index].transform.GetChild(squareIndex).gameObject);
                                 startIndex = nBottom + 10;
                                 continue;
                             }
@@ -385,7 +406,7 @@ public class GameManager : Singleton<GameManager>
                         //if there's nothing to the right
                         if (spots[nextIndex].transform.childCount < squareIndex + 1)
                         {
-                            rowObjs.Add(spots[index].transform.GetChild(squareIndex).gameObject);
+                            tempRowObjs.Add(spots[index].transform.GetChild(squareIndex).gameObject);
                             //if never set up yet
                             if (endIndex > nBottom)
                             {
@@ -399,7 +420,7 @@ public class GameManager : Singleton<GameManager>
                             //or there's not that score
                             if (spots[nextIndex].transform.GetChild(squareIndex).GetComponent<Square>().Score != checkScore)
                             {
-                                rowObjs.Add(spots[index].transform.GetChild(squareIndex).gameObject);
+                                tempRowObjs.Add(spots[index].transform.GetChild(squareIndex).gameObject);
                                 //if never set up yet
                                 if (endIndex > nBottom)
                                 {
@@ -409,7 +430,7 @@ public class GameManager : Singleton<GameManager>
                             }
                             else if (spots[nextIndex].transform.GetChild(squareIndex).GetComponent<Square>().Score == checkScore)
                             {
-                                rowObjs.Add(spots[index].transform.GetChild(squareIndex).gameObject);
+                                tempRowObjs.Add(spots[index].transform.GetChild(squareIndex).gameObject);
                                 continue;
                             }
                         }
@@ -430,9 +451,9 @@ public class GameManager : Singleton<GameManager>
             }
         }
         while (endIndex > nBottom + 1);
-        if (rowObjs.Count < 3)
+        if (tempRowObjs.Count < 3)
         {
-            rowObjs.Clear();
+            
             // expand moves++ if this happened by player
             if (tmpSquare.GetComponent<Square>().IsSpawn)
             {
@@ -454,9 +475,34 @@ public class GameManager : Singleton<GameManager>
         }
         else
         {
+
+            //If there's no same rowObj in pop - add
+            if (!popObjs.Contains(tempRowObjs))
+            {
+                    popObjs.Add(tempRowObjs);
+            }
+                
+
+
+            
+        }
+        
+
+        //Start killing rowObjs one by one
+        StartCoroutine(Stop(popObjs));
+    }
+
+  
+    IEnumerator Stop(List<List<GameObject>> thisPopObjs)
+    {
+        //Debug.Log("STARTING COURUTINE   " + thisPopObjs.Count + " === " + rowObjs[0].GetComponent<Square>().Score);
+        yield return new WaitForSeconds(0.2f);
+        foreach(List<GameObject> rowObjs in thisPopObjs)
+        {
+           // Debug.Log(" OBJS COUNT AT THE END: " +rowObjs[0].GetComponent<Square>().Score);
             Pop(rowObjs);
         }
-
+       
        
     }
 
@@ -467,6 +513,9 @@ public class GameManager : Singleton<GameManager>
         nextShrink.text = string.Format("next shrink: {0}", expandMoves - Moves);
         slider.value = (float)(expandMoves - Moves) / expandMoves;
     }
+
+
+
 
     //Kill all adjacent squares
     public void Pop(List<GameObject> rowObjs)
@@ -507,13 +556,7 @@ public class GameManager : Singleton<GameManager>
 
       
     }
-    // struct to hold randomSpawn values
-    public struct RandValues
-    {
-
-        public int Rng { get; set; }
-        public int RandScore { get; set; }
-    }
+   
 
     public void Expand()
     {
@@ -653,9 +696,10 @@ public class GameManager : Singleton<GameManager>
                 reds++;
             }
         }
-        if (reds == spots.Count /*&& (next_score != currentSpot.transform.GetChild(currentSpot.transform.childCount - 1).GetComponent<Square>().Score)*/)
+        if (reds == spots.Count && (next_score != currentSpot.transform.GetChild(currentSpot.transform.childCount - 1).GetComponent<Square>().Score))
         {
             //noMoves = true;
+            Time.timeScale = 0;
             nextScore.text = "GAME OVER";
             Debug.Log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!GAMOVER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
